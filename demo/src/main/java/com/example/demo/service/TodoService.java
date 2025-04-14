@@ -47,20 +47,28 @@ public class TodoService {
         }
     }
 
-    public List<TodoEntity> retrieve(final String title) { // 수정(title)
+    public List<TodoEntity> retrieveByTitle(final String title) { // title로 검색하는 메소드 (GET)
+        if (title == null || title.isEmpty()) {
+            return repository.findAll(); // title 없으면 전체 조회
+        }
         return repository.findByTitle(title);
+    }
+
+    public List<TodoEntity> retrieve(final String userId) {
+        return repository.findByUserId(userId);
     }
 
     public List<TodoEntity> update(TodoEntity entity) {
         validate(entity);
-        final Optional<TodoEntity> original = repository.findById(entity.getId());
-        original.ifPresent(todo -> {
-            todo.setTitle(entity.getTitle());
-            todo.setDone(entity.isDone());
-            todo.setAuthor(entity.getAuthor());
-            todo.setPublisher(entity.getPublisher());
-            repository.save(todo);
-        });
+        final TodoEntity original = repository.getById(entity.getId());
+
+        original.setTitle(entity.getTitle());
+        original.setDone(entity.isDone());
+        original.setAuthor(entity.getAuthor());
+        original.setPublisher(entity.getPublisher());
+
+        repository.save(original);
+
         return retrieve(entity.getUserId());
     }
 

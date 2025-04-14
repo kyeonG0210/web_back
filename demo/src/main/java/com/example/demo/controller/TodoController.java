@@ -56,7 +56,7 @@ public class TodoController {
     public ResponseEntity<?> retrieveTodoList(@RequestParam(required = false) String title) {
         String UserId = "HyeonJiPark";
 
-        List<TodoEntity> entities = service.retrieve(title);
+        List<TodoEntity> entities = service.retrieveByTitle(title);
 
         List<TodoDTO> dtos = entities.stream().map(TodoDTO::new).collect(Collectors.toList());
 
