@@ -58,18 +58,19 @@ public class TodoService {
         return repository.findByUserId(userId);
     }
 
-    public List<TodoEntity> update(TodoEntity entity) {
+    public TodoEntity update(TodoEntity entity) {
         validate(entity);
-        final TodoEntity original = repository.getById(entity.getId());
-
-        original.setTitle(entity.getTitle());
-        original.setDone(entity.isDone());
-        original.setAuthor(entity.getAuthor());
-        original.setPublisher(entity.getPublisher());
-
-        repository.save(original);
-
-        return retrieve(entity.getUserId());
+        final Optional<TodoEntity> original = repository.findById(entity.getId());
+        if (original.isPresent()) {
+            TodoEntity todo = original.get();
+            todo.setTitle(entity.getTitle());
+            todo.setDone(entity.isDone());
+            todo.setAuthor(entity.getAuthor());
+            todo.setPublisher(entity.getPublisher());
+            return repository.save(todo); // 저장 후 수정된 객체 반환
+        } else {
+            throw new RuntimeException("Todo not found with id: " + entity.getId());
+        }
     }
 
     public List<TodoEntity> delete(final TodoEntity entity) {

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 
 public class TodoDTO {
     private String id;
-    private String userId;
+    private String userId; // 응답에 userId 내보내도록 수정
     private String title;
     private String author;
     private String publisher;
@@ -21,7 +21,7 @@ public class TodoDTO {
 
     public TodoDTO(final TodoEntity todoEntity) {
         this.id = todoEntity.getId();
-        this.userId = todoEntity.getUserId();
+        this.userId = todoEntity.getUserId(); // userId 추가
         this.title = todoEntity.getTitle();
         this.author = todoEntity.getAuthor();
         this.publisher = todoEntity.getPublisher();
@@ -31,7 +31,7 @@ public class TodoDTO {
     public static TodoEntity toEntity(final TodoDTO dto) {
         return TodoEntity.builder()
                 .id(dto.getId())
-                .userId(dto.getUserId())
+                .userId(dto.getUserId()) // userId 추가
                 .title(dto.getTitle())
                 .author(dto.getAuthor())
                 .publisher(dto.getPublisher())

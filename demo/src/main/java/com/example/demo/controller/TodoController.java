@@ -67,19 +67,27 @@ public class TodoController {
 
     @PutMapping
     public ResponseEntity<?> updateTodo(@RequestBody TodoDTO dto) {
-        String UserId = "HyeonJiPark";
+        try {
+            String UserId = "HyeonJiPark";
 
-        TodoEntity entity = TodoDTO.toEntity(dto);
+            TodoEntity entity = TodoDTO.toEntity(dto);
 
-        entity.setUserId(UserId);
+            entity.setUserId(UserId);
 
-        List<TodoEntity> entities = service.update(entity);
+            TodoEntity updatedEntity = service.update(entity); // 수정된 하나만 가져옴
 
-        List<TodoDTO> dtos = entities.stream().map(TodoDTO::new).collect(Collectors.toList());
+            TodoDTO updatedDto = new TodoDTO(updatedEntity);
 
-        ResponseDTO<TodoDTO> response = ResponseDTO.<TodoDTO>builder().data(dtos).build();
+            ResponseDTO<TodoDTO> response = ResponseDTO.<TodoDTO>builder()
+                    .data(List.of(updatedDto)) // 리스트 형태지만 1개만 넣기
+                    .build();
 
-        return ResponseEntity.ok().body(response);
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            String error = e.getMessage();
+            ResponseDTO<TodoDTO> response = ResponseDTO.<TodoDTO>builder().error(error).build();
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 
     @DeleteMapping
