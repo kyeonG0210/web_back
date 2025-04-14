@@ -53,16 +53,22 @@ public class TodoController {
     }
 
     @GetMapping
-    public ResponseEntity<?> retrieveTodoList(@RequestParam(required = false) String title) {
-        String UserId = "HyeonJiPark";
+    public ResponseEntity<?> retrieveTodoList(@RequestBody TodoDTO dto) {
+        try {
+            String title = dto.getTitle(); // JSON으로 받은 title
 
-        List<TodoEntity> entities = service.retrieveByTitle(title);
+            List<TodoEntity> entities = service.retrieveByTitle(title);
 
-        List<TodoDTO> dtos = entities.stream().map(TodoDTO::new).collect(Collectors.toList());
+            List<TodoDTO> dtos = entities.stream().map(TodoDTO::new).collect(Collectors.toList());
 
-        ResponseDTO<TodoDTO> response = ResponseDTO.<TodoDTO>builder().data(dtos).build();
+            ResponseDTO<TodoDTO> response = ResponseDTO.<TodoDTO>builder().data(dtos).build();
 
-        return ResponseEntity.ok().body(response);
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            String error = e.getMessage();
+            ResponseDTO<TodoDTO> response = ResponseDTO.<TodoDTO>builder().error(error).build();
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 
     @PutMapping
